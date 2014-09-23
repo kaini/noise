@@ -1,0 +1,10 @@
+[package]
+
+name = "noise"
+version = "0.0.1"
+authors = ["Michael Kainer <kaini1123@gmail.com>"]
+
+[dev-dependencies.image]
+
+# Required for examples
+git = "https://github.com/PistonDevelopers/rust-image"
