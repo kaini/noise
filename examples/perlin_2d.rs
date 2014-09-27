@@ -21,7 +21,7 @@ fn write_png(image: &DynamicImage) {
 
 fn main() {
     let amp = 76.5;
-    let f = 0.01;
+    let f = 0.02;
     let octaves = vec![
         SmoothNoise2D::new(rand::random(), amp, (f, f), PerlinInterpolator),
         SmoothNoise2D::new(rand::random(), amp / 2.0, (f * 2.0, f * 2.0), PerlinInterpolator),
@@ -35,7 +35,7 @@ fn main() {
     let size = 512;
     let image = ImageBuf::from_fn(size, size, |x, y| {
         let v = (127.5 + noise.value((x as f64, y as f64))).round();
-        Rgb(0, 0, v as u8)
+        Rgb(v as u8, v as u8, v as u8)
     });
     write_png(&image::ImageRgb8(image));    
 }

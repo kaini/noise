@@ -1,17 +1,19 @@
 use interpolate::{Interpolator, position_to_percent};
-use noise::Noise;
-use std::rand::{SeedableRng, IsaacRng, Closed01, Rng};
+use noise::{Noise, integer_noise};
+
+static PRIME_POSITION: i32 = 999961;
+static PRIME_SEED: i32 = 748361;
 
 #[deriving(PartialEq, PartialOrd, Show)]
 pub struct SmoothNoise1D<I: Interpolator> {
-    seed: u32,
+    seed: i32,
     amplitude: f64,
     frequency: f64,
     interpolator: I,
 }
 
 impl<I: Interpolator> SmoothNoise1D<I> {
-    pub fn new(seed: u32, amplitude: f64, frequency: f64, interpolator: I) -> SmoothNoise1D<I> {
+    pub fn new(seed: i32, amplitude: f64, frequency: f64, interpolator: I) -> SmoothNoise1D<I> {
         SmoothNoise1D{
             seed: seed,
             amplitude: amplitude,
@@ -21,9 +23,7 @@ impl<I: Interpolator> SmoothNoise1D<I> {
     }
 
     fn base_value(&self, position: i32) -> f64 {
-        let mut rng: IsaacRng = SeedableRng::from_seed([self.seed, position as u32].as_slice());
-        let Closed01(value) = rng.gen::<Closed01<f64>>();
-        (value - 0.5) * 2.0 * self.amplitude
+        integer_noise(PRIME_POSITION * position + PRIME_SEED * self.seed) * self.amplitude
     }
 }
 
