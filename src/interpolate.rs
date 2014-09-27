@@ -34,9 +34,23 @@ impl Interpolator for CosInterpolator {
     }
 }
 
+pub fn position_to_percent(position: f64) -> f64 {
+    let fract = position.fract();
+    if position < 0.0 {
+        if fract == 0.0 {
+            0.0
+        } else {
+            1.0 + fract  // fract is negative here
+        }
+    } else {
+        fract
+    }
+}
+
 #[cfg(test)]
 mod test {
-    use super::{LinearInterpolator, PerlinInterpolator, CosInterpolator, Interpolator};
+    use super::{LinearInterpolator, PerlinInterpolator, CosInterpolator, Interpolator,
+                position_to_percent};
     use std::num::abs;
 
     #[test]
@@ -61,5 +75,16 @@ mod test {
         let b = 20.0;
         let result = CosInterpolator.interpolate(a, b, 0.75);
         assert!(abs(result - 18.5355) < 0.0001);
+    }
+
+    #[test]
+    fn position_to_percent_test() {
+        assert!(position_to_percent(0.0) == 0.0);
+
+        assert!(position_to_percent(1.0) == 0.0);
+        assert!(position_to_percent(-1.0) == 0.0);
+
+        assert!(position_to_percent(1.25) == 0.25);
+        assert!(position_to_percent(-1.25) == 0.75);
     }
 }

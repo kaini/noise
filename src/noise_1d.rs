@@ -1,4 +1,4 @@
-use interpolate::Interpolator;
+use interpolate::{Interpolator, position_to_percent};
 use std::num::Float;
 use std::rand::{SeedableRng, IsaacRng, Closed01, Rng};
 
@@ -25,17 +25,11 @@ impl<I: Interpolator> SmoothNoise1D<I> {
         let base_value_index = position_scaled.floor() as i32;
         let base_value_a = self.base_value(base_value_index);
         let base_value_b = self.base_value(base_value_index + 1);
-        let position_between_ab = 
-            if position_scaled < 0.0 {
-                let fract = position_scaled.fract();
-                if fract == 0.0 { 0.0 } else { 1.0 + position_scaled.fract() }
-            } else {
-                position_scaled.fract()
-            };
-        let result = self.interpolator.interpolate(base_value_a, base_value_b, position_between_ab);
+        let percent = position_to_percent(position_scaled);
+        let result = self.interpolator.interpolate(base_value_a, base_value_b, percent);
         //println!("pos {} idx {} a {} b {} frac {} result {}",
         //    position_scaled, base_value_index, base_value_a,
-        //    base_value_b, position_between_ab, result);
+        //    base_value_b, percent, result);
         result
     }
 
