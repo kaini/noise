@@ -1,4 +1,5 @@
 use interpolate::{Interpolator, position_to_percent};
+use noise::Noise;
 use std::rand::{IsaacRng, SeedableRng, Closed01, Rng};
 
 pub struct SmoothNoise2D<I: Interpolator> {
@@ -19,7 +20,16 @@ impl<I: Interpolator> SmoothNoise2D<I> {
         }
     }
 
-    pub fn value(&self, position: (f64, f64)) -> f64 {
+    fn base_value(&self, position: (i32, i32)) -> f64 {
+        let (x, y) = position;
+        let mut rng: IsaacRng = SeedableRng::from_seed([self.seed, x as u32, y as u32].as_slice());
+        let Closed01(value) = rng.gen::<Closed01<f64>>();
+        (value - 0.5) * 2.0 * self.amplitude
+    }
+}
+
+impl<I: Interpolator> Noise<(f64, f64), f64> for SmoothNoise2D<I> {
+    fn value(&self, position: (f64, f64)) -> f64 {
         let (fx, fy) = self.frequency;
         let (rawx, rawy) = position;
         let (x, y) = (rawx * fx, rawy * fy);
@@ -37,19 +47,13 @@ impl<I: Interpolator> SmoothNoise2D<I> {
         // Interpolate y direction
         self.interpolator.interpolate(xval_a, xval_b, position_to_percent(y))
     }
-
-    fn base_value(&self, position: (i32, i32)) -> f64 {
-        let (x, y) = position;
-        let mut rng: IsaacRng = SeedableRng::from_seed([self.seed, x as u32, y as u32].as_slice());
-        let Closed01(value) = rng.gen::<Closed01<f64>>();
-        (value - 0.5) * 2.0 * self.amplitude
-    }
 }
 
 #[cfg(test)]
 mod test {
     use super::SmoothNoise2D;
     use interpolate::LinearInterpolator;
+    use noise::Noise;
 
     #[test]
     fn smooth_noise_2d_test() {

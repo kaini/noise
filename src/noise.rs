@@ -1,3 +1,5 @@
-pub trait Noise<P, R> {
-    fn value(&self, position: &P) -> R;
+use std::num::Float;
+
+pub trait Noise<P, R: Float> {
+    fn value(&self, position: P) -> R;
 }

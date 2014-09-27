@@ -2,7 +2,9 @@ extern crate image;
 extern crate noise;
 
 use image::{DynamicImage, GenericImage, ImageBuf, Rgb};
-use noise::{SmoothNoise1D, PerlinNoise1D};
+use noise::SmoothNoise1D;
+use noise::PerlinNoise;
+use noise::Noise;
 use noise::interpolate::PerlinInterpolator;
 use std::io::File;
 use std::path::Path;
@@ -28,7 +30,7 @@ fn main() {
         SmoothNoise1D::new(rand::random(), amp / 16.0, freq * 16.0, PerlinInterpolator),
         SmoothNoise1D::new(rand::random(), amp / 32.0, freq * 32.0, PerlinInterpolator),
     ];
-    let noise = PerlinNoise1D::new(octaves);
+    let noise = PerlinNoise::new(octaves);
 
     let img_height = (amp * 10.0 / 3.0 + 1.0) as u32;
     let mut image = ImageBuf::from_pixel(1000, img_height, Rgb(255, 255, 255));

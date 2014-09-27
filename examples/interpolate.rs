@@ -3,6 +3,7 @@ extern crate noise;
 
 use image::{DynamicImage, GenericImage, ImageBuf, Rgb};
 use noise::SmoothNoise1D;
+use noise::Noise;
 use noise::interpolate::{CosInterpolator, LinearInterpolator, PerlinInterpolator};
 use std::io::File;
 use std::path::Path;
