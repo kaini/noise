@@ -3,16 +3,16 @@ use std::num::Float;
 use std::rand::{SeedableRng, IsaacRng, Closed01, Rng};
 
 #[deriving(PartialEq, PartialOrd, Show)]
-pub struct SmoothNoise<I: Interpolator> {
+pub struct SmoothNoise1D<I: Interpolator> {
     seed: u32,
     amplitude: f64,
     frequency: f64,
     interpolator: I,
 }
 
-impl<I: Interpolator> SmoothNoise<I> {
-    pub fn new(seed: u32, amplitude: f64, frequency: f64, interpolator: I) -> SmoothNoise<I> {
-        SmoothNoise{
+impl<I: Interpolator> SmoothNoise1D<I> {
+    pub fn new(seed: u32, amplitude: f64, frequency: f64, interpolator: I) -> SmoothNoise1D<I> {
+        SmoothNoise1D{
             seed: seed,
             amplitude: amplitude,
             frequency: frequency,
@@ -46,13 +46,13 @@ impl<I: Interpolator> SmoothNoise<I> {
     }
 }
 
-pub struct PerlinNoise<I: Interpolator> {
-    octaves: Vec<SmoothNoise<I>>,
+pub struct PerlinNoise1D<I: Interpolator> {
+    octaves: Vec<SmoothNoise1D<I>>,
 }
 
-impl<I: Interpolator> PerlinNoise<I> {
-    pub fn new(octaves: Vec<SmoothNoise<I>>) -> PerlinNoise<I> {
-        PerlinNoise {octaves: octaves}
+impl<I: Interpolator> PerlinNoise1D<I> {
+    pub fn new(octaves: Vec<SmoothNoise1D<I>>) -> PerlinNoise1D<I> {
+        PerlinNoise1D{octaves: octaves}
     }
 
     pub fn value(&self, position: f64) -> f64 {
@@ -66,12 +66,12 @@ impl<I: Interpolator> PerlinNoise<I> {
 
 #[cfg(test)]
 mod test {
-    use super::{SmoothNoise, PerlinNoise};
+    use super::{SmoothNoise1D, PerlinNoise1D};
     use interpolate::{LinearInterpolator, Interpolator};
     use std::num::{abs, signum};
 
     fn test_noise<I: Interpolator, Iter: Iterator<f64>>(
-            noise: &SmoothNoise<I>, min: f64, max: f64, max_delta: f64,
+            noise: &SmoothNoise1D<I>, min: f64, max: f64, max_delta: f64,
             monotone_steps: i32, iter: &mut Iter) {
         assert!(max_delta >= 0.0);
 
@@ -124,28 +124,28 @@ mod test {
 
     #[test]
     fn smooth_noise_test() {
-        let noise = &SmoothNoise::new(0, 1.0, 1.0, LinearInterpolator);
+        let noise = &SmoothNoise1D::new(0, 1.0, 1.0, LinearInterpolator);
         let range = &mut range(-200i, 201).map(|x| x as f64 / 13.0);
         test_noise(noise, -1.0, 1.0, 2.0 / 13.0, 13, range);
     }
 
     #[test]
     fn smooth_noise_low_frequency_test() {
-        let noise = &SmoothNoise::new(0, 1.0, 1.0 / 100.0, LinearInterpolator);
+        let noise = &SmoothNoise1D::new(0, 1.0, 1.0 / 100.0, LinearInterpolator);
         let range = &mut range(-2000i, 2001).map(|x| x as f64 / 7.0);
         test_noise(noise, -1.0, 1.0, 2.0 / 700.0, 700, range);
     }
 
     #[test]
     fn smooth_noise_high_frequency_test() {
-        let noise = &SmoothNoise::new(0, 1.0, 100.0, LinearInterpolator);
+        let noise = &SmoothNoise1D::new(0, 1.0, 100.0, LinearInterpolator);
         let range = &mut range(-200i, 201).map(|x| x as f64 / 11.0);
         test_noise(noise, -1.0, 1.0, 2.0 / 0.11, 1, range);
     }
 
     #[test]
     fn smooth_noise_amplitude_test() {
-        let noise = &SmoothNoise::new(0, 12.5, 1.0, LinearInterpolator);
+        let noise = &SmoothNoise1D::new(0, 12.5, 1.0, LinearInterpolator);
         let range = &mut range(-200i, 201).map(|x| x as f64 / 3.0);
         test_noise(noise, -12.5, 12.5, 25.0 / 3.0, 3, range);
     }
@@ -154,10 +154,10 @@ mod test {
     // TODO abstract noise generator
     fn perlin_noise_test() {
         let octaves = vec![
-            SmoothNoise::new(0, 1.0, 1.0, LinearInterpolator),
-            SmoothNoise::new(0, 0.5, 2.0, LinearInterpolator),
+            SmoothNoise1D::new(0, 1.0, 1.0, LinearInterpolator),
+            SmoothNoise1D::new(0, 0.5, 2.0, LinearInterpolator),
         ];
-        let noise = PerlinNoise::new(octaves);
+        let noise = PerlinNoise1D::new(octaves);
         let range = &mut range(-200i, 201).map(|x| x as f64 / 10.0);
         for i in range {
             let value = noise.value(i);

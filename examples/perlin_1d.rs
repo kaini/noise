@@ -2,7 +2,7 @@ extern crate image;
 extern crate noise;
 
 use image::{DynamicImage, GenericImage, ImageBuf, Rgb};
-use noise::{SmoothNoise, PerlinNoise};
+use noise::{SmoothNoise1D, PerlinNoise1D};
 use noise::interpolate::PerlinInterpolator;
 use std::io::File;
 use std::path::Path;
@@ -21,14 +21,14 @@ fn main() {
     let amp = 60.0;
     let freq = 0.01;
     let octaves = vec![
-        SmoothNoise::new(rand::random(), amp, freq, PerlinInterpolator),
-        SmoothNoise::new(rand::random(), amp / 2.0, freq * 2.0, PerlinInterpolator),
-        SmoothNoise::new(rand::random(), amp / 4.0, freq * 4.0, PerlinInterpolator),
-        SmoothNoise::new(rand::random(), amp / 8.0, freq * 8.0, PerlinInterpolator),
-        SmoothNoise::new(rand::random(), amp / 16.0, freq * 16.0, PerlinInterpolator),
-        SmoothNoise::new(rand::random(), amp / 32.0, freq * 32.0, PerlinInterpolator),
+        SmoothNoise1D::new(rand::random(), amp, freq, PerlinInterpolator),
+        SmoothNoise1D::new(rand::random(), amp / 2.0, freq * 2.0, PerlinInterpolator),
+        SmoothNoise1D::new(rand::random(), amp / 4.0, freq * 4.0, PerlinInterpolator),
+        SmoothNoise1D::new(rand::random(), amp / 8.0, freq * 8.0, PerlinInterpolator),
+        SmoothNoise1D::new(rand::random(), amp / 16.0, freq * 16.0, PerlinInterpolator),
+        SmoothNoise1D::new(rand::random(), amp / 32.0, freq * 32.0, PerlinInterpolator),
     ];
-    let noise = PerlinNoise::new(octaves);
+    let noise = PerlinNoise1D::new(octaves);
 
     let img_height = (amp * 10.0 / 3.0 + 1.0) as u32;
     let mut image = ImageBuf::from_pixel(1000, img_height, Rgb(255, 255, 255));

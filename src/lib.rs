@@ -1,4 +1,4 @@
-pub use noise::{SmoothNoise, PerlinNoise};
+pub use noise_1d::{SmoothNoise1D, PerlinNoise1D};
 
-mod noise;
+mod noise_1d;
 pub mod interpolate;
