@@ -2,10 +2,7 @@ extern crate image;
 extern crate noise;
 
 use image::{DynamicImage, GenericImage, ImageBuf, Rgb};
-use noise::SmoothNoise1D;
-use noise::PerlinNoise;
-use noise::Noise;
-use noise::interpolate::PerlinInterpolator;
+use noise::{SmoothNoise1D, PerlinNoise, Noise};
 use std::io::File;
 use std::path::Path;
 use std::rand;
@@ -23,12 +20,12 @@ fn main() {
     let amp = 60.0;
     let freq = 0.01;
     let octaves = vec![
-        SmoothNoise1D::new(rand::random(), amp, freq, PerlinInterpolator),
-        SmoothNoise1D::new(rand::random(), amp / 2.0, freq * 2.0, PerlinInterpolator),
-        SmoothNoise1D::new(rand::random(), amp / 4.0, freq * 4.0, PerlinInterpolator),
-        SmoothNoise1D::new(rand::random(), amp / 8.0, freq * 8.0, PerlinInterpolator),
-        SmoothNoise1D::new(rand::random(), amp / 16.0, freq * 16.0, PerlinInterpolator),
-        SmoothNoise1D::new(rand::random(), amp / 32.0, freq * 32.0, PerlinInterpolator),
+        SmoothNoise1D::new_default(rand::random(), amp, freq),
+        SmoothNoise1D::new_default(rand::random(), amp / 2.0, freq * 2.0),
+        SmoothNoise1D::new_default(rand::random(), amp / 4.0, freq * 4.0),
+        SmoothNoise1D::new_default(rand::random(), amp / 8.0, freq * 8.0),
+        SmoothNoise1D::new_default(rand::random(), amp / 16.0, freq * 16.0),
+        SmoothNoise1D::new_default(rand::random(), amp / 32.0, freq * 32.0),
     ];
     let noise = PerlinNoise::new(octaves);
 

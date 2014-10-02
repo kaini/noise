@@ -26,14 +26,14 @@ impl<P: Clone, R: Float, N: Noise<P, R>> Noise<P, R> for PerlinNoise<P, R, N> {
 mod test {
     use super::PerlinNoise;
     use noise_1d::SmoothNoise1D;
-    use noise::Noise;
+    use noise::{Noise, DefaultI32Noise};
     use interpolate::LinearInterpolator;
 
     #[test]
     fn perlin_noise_test() {
         let octaves = vec![
-            SmoothNoise1D::new(0, 1.0, 1.0, LinearInterpolator),
-            SmoothNoise1D::new(0, 0.5, 2.0, LinearInterpolator),
+            SmoothNoise1D::new(0, 1.0, 1.0, LinearInterpolator, DefaultI32Noise),
+            SmoothNoise1D::new(0, 0.5, 2.0, LinearInterpolator, DefaultI32Noise),
         ];
         let noise = PerlinNoise::new(octaves);
         let range = &mut range(-200i, 201).map(|x| x as f64 / 10.0);

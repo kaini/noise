@@ -1,37 +1,51 @@
-use interpolate::{Interpolator, position_to_percent};
-use noise::{Noise, integer_noise};
+use interpolate::{Interpolator, position_to_percent, PerlinInterpolator};
+use noise::{Noise, DefaultI32Noise};
+use std::rand;
 
 static PRIME_X: i32 = 1956337;
 static PRIME_Y: i32 = 8775607;
 static PRIME_SEED: i32 = 967397;
 
 #[deriving(PartialEq, PartialOrd, Show)]
-pub struct SmoothNoise2D<I: Interpolator> {
+pub struct SmoothNoise2D<I: Interpolator, N: Noise<i32, f64>> {
     seed: i32,
     amplitude: f64,
     frequency: (f64, f64),
     interpolator: I,
+    noise: N,
 }
 
-impl<I: Interpolator> SmoothNoise2D<I> {
-    pub fn new(seed: i32, amplitude: f64, frequency: (f64, f64), interpolator: I)
-              -> SmoothNoise2D<I> {
+impl<I: Interpolator, N: Noise<i32, f64>> SmoothNoise2D<I, N> {
+    pub fn new(seed: i32, amplitude: f64, frequency: (f64, f64), interpolator: I, noise: N)
+              -> SmoothNoise2D<I, N> {
         SmoothNoise2D{
             seed: seed,
             amplitude: amplitude,
             frequency: frequency,
             interpolator: interpolator,
+            noise: noise,
         }
     }
 
     fn base_value(&self, position: (i32, i32)) -> f64 {
         let (x, y) = position;
         let n = x * PRIME_X + y * PRIME_Y + self.seed * PRIME_SEED;
-        integer_noise(n) * self.amplitude
+        self.noise.value(n) * self.amplitude
     }
 }
 
-impl<I: Interpolator> Noise<(f64, f64), f64> for SmoothNoise2D<I> {
+impl SmoothNoise2D<PerlinInterpolator, DefaultI32Noise> {
+    pub fn new_default(seed: i32, amplitude: f64, frequency: (f64, f64))
+                      -> SmoothNoise2D<PerlinInterpolator, DefaultI32Noise> {
+        SmoothNoise2D::new(seed, amplitude, frequency, PerlinInterpolator, DefaultI32Noise)
+    }
+
+    pub fn new_simple() -> SmoothNoise2D<PerlinInterpolator, DefaultI32Noise> {
+        SmoothNoise2D::new_default(rand::random(), 1.0, (1.0, 1.0))
+    }
+}
+
+impl<I: Interpolator, N: Noise<i32, f64>> Noise<(f64, f64), f64> for SmoothNoise2D<I, N> {
     fn value(&self, position: (f64, f64)) -> f64 {
         let (fx, fy) = self.frequency;
         let (rawx, rawy) = position;
@@ -56,11 +70,35 @@ impl<I: Interpolator> Noise<(f64, f64), f64> for SmoothNoise2D<I> {
 mod test {
     use super::SmoothNoise2D;
     use interpolate::LinearInterpolator;
-    use noise::Noise;
+    use noise::{Noise, DefaultI32Noise};
 
     #[test]
     fn smooth_noise_2d_test() {
-        let noise = SmoothNoise2D::new(0, 1.0, (1.0, 1.0), LinearInterpolator);
+        let noise = SmoothNoise2D::new(0, 1.0, (1.0, 1.0), LinearInterpolator, DefaultI32Noise);
+        for x in range(-20i, 21) {
+            for y in range(-20i, 21) {
+                let pos = (x as f64 / 3.0, y as f64 / 3.0);
+                let value = noise.value(pos);
+                assert!(-1.0 <= value && value <= 1.0);
+            }
+        }
+    }
+
+    #[test]
+    fn new_default_test() {
+        let noise = SmoothNoise2D::new_default(0, 1.0, (1.0, 1.0));
+        for x in range(-20i, 21) {
+            for y in range(-20i, 21) {
+                let pos = (x as f64 / 3.0, y as f64 / 3.0);
+                let value = noise.value(pos);
+                assert!(-1.0 <= value && value <= 1.0);
+            }
+        }
+    }
+
+    #[test]
+    fn new_simple_test() {
+        let noise = SmoothNoise2D::new_simple();
         for x in range(-20i, 21) {
             for y in range(-20i, 21) {
                 let pos = (x as f64 / 3.0, y as f64 / 3.0);

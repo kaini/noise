@@ -2,8 +2,7 @@ extern crate image;
 extern crate noise;
 
 use image::{DynamicImage, GenericImage, ImageBuf, Rgb};
-use noise::SmoothNoise1D;
-use noise::Noise;
+use noise::{SmoothNoise1D, Noise, DefaultI32Noise};
 use noise::interpolate::{CosInterpolator, LinearInterpolator, PerlinInterpolator};
 use std::io::File;
 use std::path::Path;
@@ -23,9 +22,9 @@ fn main() {
     let amp = 60.0;
     let freq = 0.02;
 
-    let noise_a = SmoothNoise1D::new(seed, amp, freq, PerlinInterpolator);
-    let noise_b = SmoothNoise1D::new(seed, amp, freq, CosInterpolator);
-    let noise_c = SmoothNoise1D::new(seed, amp, freq, LinearInterpolator);
+    let noise_a = SmoothNoise1D::new(seed, amp, freq, PerlinInterpolator, DefaultI32Noise);
+    let noise_b = SmoothNoise1D::new(seed, amp, freq, CosInterpolator, DefaultI32Noise);
+    let noise_c = SmoothNoise1D::new(seed, amp, freq, LinearInterpolator, DefaultI32Noise);
 
     let mut image = ImageBuf::from_pixel(1000, 150, Rgb(255, 255, 255));
 
