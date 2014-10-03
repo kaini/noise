@@ -10,5 +10,6 @@ script:
     - cargo test
     - cargo doc
 after_script:
-    - cp -R target/doc doc
+    - rm -rf doc
+    - cp -R target/doc .
     - curl http://www.rust-ci.org/artifacts/put?t=$RUSTCI_TOKEN | sh
