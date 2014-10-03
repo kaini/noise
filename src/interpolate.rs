@@ -70,6 +70,7 @@ impl Interpolator for CosInterpolator {
 }
 
 /// Sawtooth function in the range zero (inclusive) to one (exclusive) and a frequency of one.
+#[stable]
 pub fn sawtooth(x: f64) -> f64 {
     x - x.floor()
 }
