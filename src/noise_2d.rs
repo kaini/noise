@@ -1,4 +1,4 @@
-use interpolate::{Interpolator, position_to_percent, PerlinInterpolator};
+use interpolate::{Interpolator, sawtooth, PerlinInterpolator};
 use noise::{Noise, DefaultI32Noise};
 use std::rand;
 
@@ -6,7 +6,7 @@ static PRIME_X: i32 = 1956337;
 static PRIME_Y: i32 = 8775607;
 static PRIME_SEED: i32 = 967397;
 
-#[deriving(PartialEq, PartialOrd, Show)]
+/// Generator for two dimensional smooth noise.
 pub struct SmoothNoise2D<I: Interpolator, N: Noise<i32, f64>> {
     seed: i32,
     amplitude: f64,
@@ -16,6 +16,9 @@ pub struct SmoothNoise2D<I: Interpolator, N: Noise<i32, f64>> {
 }
 
 impl<I: Interpolator, N: Noise<i32, f64>> SmoothNoise2D<I, N> {
+    /// Creates a noise generator for two dimensional noise.
+    ///
+    /// For a detailed description of the parameters see `SmoothNoise1D`.
     pub fn new(seed: i32, amplitude: f64, frequency: (f64, f64), interpolator: I, noise: N)
               -> SmoothNoise2D<I, N> {
         SmoothNoise2D{
@@ -35,11 +38,20 @@ impl<I: Interpolator, N: Noise<i32, f64>> SmoothNoise2D<I, N> {
 }
 
 impl SmoothNoise2D<PerlinInterpolator, DefaultI32Noise> {
+    /// Creates a generator for two dimensional smooth noise using sensible defaults.
+    ///
+    /// For interpolation the `PerlinInterpolator` will be used and as base noise `DefaultI32Noise`
+    /// will be used.
     pub fn new_default(seed: i32, amplitude: f64, frequency: (f64, f64))
                       -> SmoothNoise2D<PerlinInterpolator, DefaultI32Noise> {
         SmoothNoise2D::new(seed, amplitude, frequency, PerlinInterpolator, DefaultI32Noise)
     }
 
+    /// Creates a randomly seeded generator for two dimensional smoooth noise.
+    ///
+    /// This generator will have an amplitude and frequency of one and use the `PerlinIntepolator`
+    /// as interpolator and `DefaultI32Noise` as base noise. The seed is chosen by
+    /// `std::rand::random()`.
     pub fn new_simple() -> SmoothNoise2D<PerlinInterpolator, DefaultI32Noise> {
         SmoothNoise2D::new_default(rand::random(), 1.0, (1.0, 1.0))
     }
@@ -53,7 +65,7 @@ impl<I: Interpolator, N: Noise<i32, f64>> Noise<(f64, f64), f64> for SmoothNoise
         let (basex, basey) = (x.floor() as i32, y.floor() as i32);
 
         // Interpolate x direction
-        let x_percent = position_to_percent(x);
+        let x_percent = sawtooth(x);
         let xval_a = self.interpolator.interpolate(self.base_value((basex, basey)),
                                                    self.base_value((basex + 1, basey)),
                                                    x_percent);
@@ -62,7 +74,7 @@ impl<I: Interpolator, N: Noise<i32, f64>> Noise<(f64, f64), f64> for SmoothNoise
                                                    x_percent);
 
         // Interpolate y direction
-        self.interpolator.interpolate(xval_a, xval_b, position_to_percent(y))
+        self.interpolator.interpolate(xval_a, xval_b, sawtooth(y))
     }
 }
 

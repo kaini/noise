@@ -1,11 +1,11 @@
-use interpolate::{Interpolator, PerlinInterpolator, position_to_percent};
+use interpolate::{Interpolator, PerlinInterpolator, sawtooth};
 use noise::{Noise, DefaultI32Noise};
 use std::rand;
 
 static PRIME_POSITION: i32 = 999961;
 static PRIME_SEED: i32 = 748361;
 
-#[deriving(PartialEq, PartialOrd, Show)]
+/// Generator for one dimensional smooth noise.
 pub struct SmoothNoise1D<I: Interpolator, N: Noise<i32, f64>> {
     seed: i32,
     amplitude: f64,
@@ -15,6 +15,19 @@ pub struct SmoothNoise1D<I: Interpolator, N: Noise<i32, f64>> {
 }
 
 impl<I: Interpolator, N: Noise<i32, f64>> SmoothNoise1D<I, N> {
+    /// Initializes a generator for one dimensional smooth noise.
+    ///
+    /// # Parameters
+    ///
+    /// * `seed`: The same `seed` always result in the same noise pattern. If you want random noise
+    /// pass `std::rand::random()` as seed.
+    /// * `amplitude`: The resulting noise will be in the range `-amplitude` to `amplitude` (both
+    /// borders inclusive).
+    /// * `frequency`: A frequency of one means that the monotony of the resulting noise stays
+    /// consistent for at least one unit. A high frequency results in "chaotic noise", lower
+    /// frequency results in "cloudy noise". This basically works like frequency for waves.
+    /// * `interpolator`: The interpolation strategy to be used. See `noise::interpolate`.
+    /// * `noise`: The base noise to be used. `DefaultI32Noise` works fine.
     pub fn new(seed: i32, amplitude: f64, frequency: f64, interpolator: I, noise: N)
               -> SmoothNoise1D<I, N> {
         SmoothNoise1D{
@@ -32,11 +45,22 @@ impl<I: Interpolator, N: Noise<i32, f64>> SmoothNoise1D<I, N> {
 }
 
 impl SmoothNoise1D<PerlinInterpolator, DefaultI32Noise> {
+    /// Initializes a generator for one dimensional smooth noise using sensible defaults.
+    /// 
+    /// This generator will use `PerlinInterpolator` as interpolator and `DefaultI32Noise` as
+    /// base noise.
+    ///
+    /// See `SmoothNoise1D::new` for a description of the parameters.
     pub fn new_default(seed: i32, amplitude: f64, frequency: f64)
                       -> SmoothNoise1D<PerlinInterpolator, DefaultI32Noise> {
         SmoothNoise1D::new(seed, amplitude, frequency, PerlinInterpolator, DefaultI32Noise)
     }
 
+    /// Creates a randomly seeeded generator for one dimensional smooth noise.
+    ///
+    /// This generator will have an amplitude and frequency of one and use the `PerlinIntepolator`
+    /// as interpolator and `DefaultI32Noise` as base noise. The seed is chosen by
+    /// `std::rand::random()`.
     pub fn new_simple() -> SmoothNoise1D<PerlinInterpolator, DefaultI32Noise> {
         SmoothNoise1D::new_default(rand::random(), 1.0, 1.0)
     }
@@ -48,7 +72,7 @@ impl<I: Interpolator, N: Noise<i32, f64>> Noise<f64, f64> for SmoothNoise1D<I, N
         let base_value_index = position_scaled.floor() as i32;
         let base_value_a = self.base_value(base_value_index);
         let base_value_b = self.base_value(base_value_index + 1);
-        let percent = position_to_percent(position_scaled);
+        let percent = sawtooth(position_scaled);
         let result = self.interpolator.interpolate(base_value_a, base_value_b, percent);
         //println!("pos {} idx {} a {} b {} frac {} result {}",
         //    position_scaled, base_value_index, base_value_a,
