@@ -34,3 +34,4 @@ Smooth noise can be generated with different interpolation strategies: By defaul
 
 * 3D and 4D noise
 * Generalize smooth noise for all `Float` types
+* Benchmarks
