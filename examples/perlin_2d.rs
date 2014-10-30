@@ -11,7 +11,7 @@ fn write_png(image: &DynamicImage) {
     let path = Path::new("output.png");
     let file = File::create(&path);
     match image.save(file, image::PNG) {
-        Err(e) => fail!("Could not write file! {}", e),
+        Err(e) => panic!("Could not write file! {}", e),
         Ok(..) => {},
     };
 }
