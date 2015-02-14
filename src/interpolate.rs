@@ -2,24 +2,27 @@
 //!
 //! Interpolation is required to generate smooth noise.
 
-use std::num::{Float, FloatMath};
+use std::num::Float;
+use std::f64::consts::PI;
 
 /// Interface to interpolate beweeen two numbers.
-pub trait Interpolator {
+pub trait Interpolator<F: Float> {
     /// Interpolates between the two numbers `a` and `b`. `percent` is a float between 0 and 1 (both
     /// borders inclusive).
     ///
     /// There are some laws implementors of this function have to obey:
     ///
     /// * The result of `interpolate(a, b, p)` never changes.
-    /// * `interpolate(a, b, 0) == a`
-    /// * `interpolate(a, b, 1) == b`
+    /// * `interpolate(a, b, 1.0) == interpolate(b, c, 0.0)`
     /// * `interpolate(a, b, p) <= interpolate(a, b, q)` for all `p < q`
+    ///
+    /// The following law is sensible but not stricly required:
+    ///
     /// * `interpolate(a, b, p) == a + b - interpolate(a, b, 1 - p)`: This means that the function
     /// has to be mirrored around the center point of the interpolated area. Literally all sane
     /// interpolation functions obey this law. This also implies that
     /// `interpolate(a, b, 0.5) == (a + b) / 2`.
-    fn interpolate(&self, a: f64, b: f64, percent: f64) -> f64;
+    fn interpolate(&self, a: F, b: F, percent: F) -> F;
 }
 
 /// Interpolator that interoplates linear between `a` and `b`.
@@ -29,7 +32,7 @@ pub trait Interpolator {
 /// function looks like.
 pub struct LinearInterpolator;
 
-impl Interpolator for LinearInterpolator {
+impl Interpolator<f64> for LinearInterpolator {
     fn interpolate(&self, a: f64, b: f64, percent: f64) -> f64 {
         debug_assert!(0.0 <= percent && percent <= 1.0);
         a * (1.0 - percent) + b * percent
@@ -44,7 +47,7 @@ impl Interpolator for LinearInterpolator {
 /// looks like.
 pub struct PerlinInterpolator;
 
-impl Interpolator for PerlinInterpolator {
+impl Interpolator<f64> for PerlinInterpolator {
     fn interpolate(&self, a: f64, b: f64, percent: f64) -> f64 {
         debug_assert!(0.0 <= percent && percent <= 1.0);
         // 3x^2 - 2x^3
@@ -61,31 +64,30 @@ impl Interpolator for PerlinInterpolator {
 /// an idea of how this looks like.
 pub struct CosInterpolator;
 
-impl Interpolator for CosInterpolator {
+impl Interpolator<f64> for CosInterpolator {
     fn interpolate(&self, a: f64, b: f64, percent: f64) -> f64 {
         debug_assert!(0.0 <= percent && percent <= 1.0);
-        let x = (1.0 - (percent * Float::pi()).cos()) / 2.0;
+        let x = (1.0 - (percent * PI).cos()) / 2.0;
         LinearInterpolator.interpolate(a, b, x)
     }
 }
 
 /// Sawtooth function in the range zero (inclusive) to one (exclusive) and a frequency of one.
-#[stable]
-pub fn sawtooth(x: f64) -> f64 {
+pub fn sawtooth<F: Float>(x: F) -> F {
     x - x.floor()
 }
 
 #[cfg(test)]
 mod test {
     use super::{LinearInterpolator, PerlinInterpolator, CosInterpolator, Interpolator, sawtooth};
-    use std::num::abs;
+    use std::num::Float;
 
     #[test]
     fn interpolate_linear_test() {
         let a = 10.0;
         let b = 20.0;
         let result = LinearInterpolator.interpolate(a, b, 0.75);
-        assert!(abs(result - 17.5) < 0.0001);
+        assert!((result - 17.5).abs() < 0.0001);
     }
 
     #[test]
@@ -93,7 +95,7 @@ mod test {
         let a = 10.0;
         let b = 20.0;
         let result = PerlinInterpolator.interpolate(a, b, 0.75);
-        assert!(abs(result - 18.4375) < 0.0001);
+        assert!((result - 18.4375).abs() < 0.0001);
     }
 
     #[test]
@@ -101,7 +103,7 @@ mod test {
         let a = 10.0;
         let b = 20.0;
         let result = CosInterpolator.interpolate(a, b, 0.75);
-        assert!(abs(result - 18.5355) < 0.0001);
+        assert!((result - 18.5355).abs() < 0.0001);
     }
 
     #[test]

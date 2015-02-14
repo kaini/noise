@@ -4,34 +4,33 @@
 
 ## Examples
 
-### Two Dimensional Smooth Noise
+### Two Dimensional Noise
 
-Amplitude 76.5 with 0 beeing RGB (0, 0, 127.5); Frequency 0.02
-![Smooth 2D Noise](https://raw.githubusercontent.com/kaini/noise/master/doc/2d_smooth.png)
+![Smooth 2D Noise](https://raw.githubusercontent.com/kaini/noise/master/doc/noise_2d.png)
+![Perlin 2D Noise](https://raw.githubusercontent.com/kaini/noise/master/doc/perlin_2d_colors.png)
+![Perlin Generated Map](https://raw.githubusercontent.com/kaini/noise/master/doc/perlin_2d_map.png)
+![White Noise](https://raw.githubusercontent.com/kaini/noise/master/doc/white_noise.png)
 
-### Two Dimensional Coherent Noise
+### One Dimensional Noise
 
-Amplitude 76.5 with 0 beeing RGB (0, 0, 127.5); Frequency 0.02; 6 octaves
-![Coherent 2D Noise](https://raw.githubusercontent.com/kaini/noise/master/doc/2d_perlin.png)
-
-### One Dimensional Coherent Noise
-
-Amplitude 60; Frequency 0.01; 6 octaves
-![Coherent 1D Noise](https://github.com/kaini/noise/blob/master/doc/1d_perlin.png)
+![Perlin 1D Noise](https://raw.githubusercontent.com/kaini/noise/master/doc/perlin_1d.png)
+![Interpolation Strategies](https://raw.githubusercontent.com/kaini/noise/master/doc/interpolate.png)
 
 ## Features
 
-* 1D random float noise (`Noise<i32, f64>`)
-* 1D smooth noise (`Noise<f64, f64>`)
-* 2D smooth noise (`Noise<(f64, f64), f64>`)
-* Freely configurable "sum" noise resulting in Perlin noise or any other noise pattern you want to build (works with every noise source and all dimensions)
+* White noise
+* 1D interpolated noise
+* 2D interpolated noise
+* Various transformations (including sum, combine, output operations, input operations)
+	* Perlin Noise (1D and 2D)
 
-Additional noise generators can be implemented by implementing the `Noise` trait.
+Additional noise generators can be implemented by implementing the `Noise` trait or by using the provided building blocks to modify existing noise.
 
 Smooth noise can be generated with different interpolation strategies: By default Perlin interpolation, cosine interpolation and linear interpolation are provided, but more can be implemented easily by implementing the `Interpolator` trait.
 
 ## Todo
 
 * 3D and 4D noise
-* Generalize smooth noise for all `Float` types
-* Benchmarks
+* Runtime nD Noise
+* Generalize everything for all `Float` types
+* Remove `Box<Noise<...>>` Types once Rust has the features to do so.
