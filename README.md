@@ -4,7 +4,11 @@
 
 ## Examples
 
+All examples are generated using the programs in the examples directory.
+
 ### Two Dimensional Noise
+
+From left to right: smooth 2D noise, three Perlin 2D noises used as R, G and B channels, a map generated using 2D Perlin noise, white noise
 
 ![Smooth 2D Noise](https://raw.githubusercontent.com/kaini/noise/master/doc/noise_2d.png)
 ![Perlin 2D Noise](https://raw.githubusercontent.com/kaini/noise/master/doc/perlin_2d_colors.png)
@@ -13,7 +17,12 @@
 
 ### One Dimensional Noise
 
+1D Perlin noise:
+
 ![Perlin 1D Noise](https://raw.githubusercontent.com/kaini/noise/master/doc/perlin_1d.png)
+
+Various interpolation functions (from top to bottom: cosine interpolation, Perlin interpolation, linear interpolation):
+
 ![Interpolation Strategies](https://raw.githubusercontent.com/kaini/noise/master/doc/interpolate.png)
 
 ## Features
