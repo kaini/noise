@@ -8,4 +8,5 @@ rand = "*"
 
 [dependencies.image]
 # Required for examples
-rust-image = "*"
+#rust-image = "*"
+git = "https://github.com/PistonDevelopers/image"
