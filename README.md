@@ -1,6 +1,6 @@
 # noise [![Build Status](https://travis-ci.org/kaini/noise.png)](https://travis-ci.org/kaini/noise)
 
-## [Library Documentation](http://www.rust-ci.org/kaini/noise/doc/noise/) - [Code Examples](https://github.com/kaini/noise/tree/master/examples)
+## [Library Documentation](https://kaini.github.io/noise/noise/index.html) - [Code Examples](https://github.com/kaini/noise/tree/master/examples)
 
 ## Examples
 
