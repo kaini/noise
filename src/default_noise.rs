@@ -60,7 +60,7 @@ impl<In> Noise<In, In> for NoOpNoise {
     }
 }
 
-/// Wrapper that can be used to use Box<Noise<...>> as source to other
+/// Wrapper that can be used to use `Box<Noise<...>>` as source to other
 /// building blocks.
 pub struct UnboxNoise<'a, In, Out> {
     source: Box<Noise<In, Out> + 'a>
