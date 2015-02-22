@@ -27,7 +27,7 @@ use std::num::Float;
 /// * `freq` is the frequency of the noise.
 /// * `interpolator` is the interpolator that will be used to interpolate.
 pub fn new_noise_1d_int<'a, I: Interpolator<f64> + 'a>(seed: i32, amp: f64, freq: f64, interpolator: I)
-        -> Box<Noise<f64, f64> + 'a> {  // TODO use impl Noise<...>
+        -> Box<Noise<f64, Out=f64> + 'a> {  // TODO use impl Noise<...>
     Box::new(
         OutputOp::new(
             InputOp::new(
@@ -49,7 +49,7 @@ pub fn new_noise_1d_int<'a, I: Interpolator<f64> + 'a>(seed: i32, amp: f64, freq
 /// * `seed` is the seed used for the underlying random number generator.
 /// * `amp` is the amplitude of the resulting noise (values will be from `-amp` to `+amp`).
 /// * `freq` is the frequency of the noise.
-pub fn new_noise_1d(seed: i32, amp: f64, freq: f64) -> Box<Noise<f64, f64> + 'static> {  // TODO use impl
+pub fn new_noise_1d(seed: i32, amp: f64, freq: f64) -> Box<Noise<f64, Out=f64> + 'static> {  // TODO use impl
 	new_noise_1d_int(seed, amp, freq, PerlinInterpolator)
 }
 
@@ -65,7 +65,7 @@ pub fn new_noise_1d(seed: i32, amp: f64, freq: f64) -> Box<Noise<f64, f64> + 'st
 pub fn new_noise_2d_ex
         <'a, I: Interpolator<f64> + 'a>
         (seed: i32, amp: f64, (freq_x, freq_y): (f64, f64), interpolator: I)
-        -> Box<Noise<(f64, f64), f64> + 'a> {
+        -> Box<Noise<(f64, f64), Out=f64> + 'a> {
     Box::new(
         OutputOp::new(
             InputOp::new(
@@ -82,7 +82,7 @@ pub fn new_noise_2d_ex
 
 /// Generates two dimensional gradient noise using sensible defaults.
 // TODO use impl
-pub fn new_noise_2d(seed: i32, amp: f64, freq: f64) -> Box<Noise<(f64, f64), f64> + 'static> {
+pub fn new_noise_2d(seed: i32, amp: f64, freq: f64) -> Box<Noise<(f64, f64), Out=f64> + 'static> {
     new_noise_2d_ex(seed, amp, (freq, freq), PerlinInterpolator)
 }
 
@@ -92,7 +92,7 @@ pub fn new_noise_2d(seed: i32, amp: f64, freq: f64) -> Box<Noise<(f64, f64), f64
 /// `noise_1d(amp / 2, freq * 2)`, `noise_1d(amp / 4, freq * 4)`
 /// and so on (octaves many times).
 // TODO use impl
-pub fn new_perlin_noise_1d(seed: i32, amp: f64, freq: f64, octaves: usize) -> Box<Noise<f64, f64> + 'static> {
+pub fn new_perlin_noise_1d(seed: i32, amp: f64, freq: f64, octaves: usize) -> Box<Noise<f64, Out=f64> + 'static> {
 	let mut noises = Vec::with_capacity(octaves);
 
 	let mut factor = 1.0;
@@ -108,7 +108,7 @@ pub fn new_perlin_noise_1d(seed: i32, amp: f64, freq: f64, octaves: usize) -> Bo
 
 /// Generates coherent two-dimensional Perlin Noise.
 // TODO use impl
-pub fn new_perlin_noise_2d(seed: i32, amp: f64, freq: f64, octaves: usize) -> Box<Noise<(f64, f64), f64> + 'static> {
+pub fn new_perlin_noise_2d(seed: i32, amp: f64, freq: f64, octaves: usize) -> Box<Noise<(f64, f64), Out=f64> + 'static> {
     let mut noises = Vec::with_capacity(octaves);
 
     let mut factor = 1.0;
@@ -124,7 +124,7 @@ pub fn new_perlin_noise_2d(seed: i32, amp: f64, freq: f64, octaves: usize) -> Bo
 
 /// Generates random (white) noise in the given bounds (both ends inclusive).
 // TODO use impl
-pub fn new_white_noise(seed: i32, min: f64, max: f64) -> Box<Noise<i32, f64> + 'static> {
+pub fn new_white_noise(seed: i32, min: f64, max: f64) -> Box<Noise<i32, Out=f64> + 'static> {
     assert!(min <= max);
     Box::new(
         OutputOp::new(

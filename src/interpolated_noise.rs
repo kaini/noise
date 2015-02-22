@@ -11,15 +11,15 @@ fn float_to_i32<F: Float>(f: F) -> i32 {
 
 /// Takes discrete input noise to produce value-interpolated
 /// output noise.
-pub struct InterpolatedNoise<InOut: Float, Src: Noise<i32, InOut>, I: Interpolator<InOut>> {
+pub struct InterpolatedNoise<Src, I> {
     source: Src,
     interpolator: I,
 }
 
-impl<InOut: Float, Src: Noise<i32, InOut>, I: Interpolator<InOut>> InterpolatedNoise<InOut, Src, I> {
+impl<Src, I> InterpolatedNoise<Src, I> {
     /// Creates a new interpolated noise using the given source noise and the given
     /// interpolator.
-    pub fn new(source: Src, interpolator: I) -> InterpolatedNoise<InOut, Src, I> {
+    pub fn new(source: Src, interpolator: I) -> InterpolatedNoise<Src, I> {
         InterpolatedNoise{
             source: source,
             interpolator: interpolator
@@ -27,9 +27,12 @@ impl<InOut: Float, Src: Noise<i32, InOut>, I: Interpolator<InOut>> InterpolatedN
     }
 }
 
-impl<InOut: Float, Src: Noise<i32, InOut>, I: Interpolator<InOut>>
-        Noise<InOut, InOut>
-        for InterpolatedNoise<InOut, Src, I> {
+// TODO remove the i32 restriction to use any intregral type!
+impl<InOut: Float, Src: Noise<i32, Out=InOut>, I: Interpolator<InOut>>
+        Noise<InOut>
+        for InterpolatedNoise<Src, I> {
+
+    type Out = InOut;
 
     fn value(&self, position: InOut) -> InOut {
         let a = float_to_i32(position.floor());
@@ -47,12 +50,13 @@ impl<InOut: Float, Src: Noise<i32, InOut>, I: Interpolator<InOut>>
 /// See also <https://en.wikipedia.org/wiki/Perlin_noise> for the implementation.
 /// The source noise is required to be between [-1; 1] or [0; 1] and should be
 /// uniformly distributed.
-pub struct InterpolatedNoise2D<Src: Noise<i32, f64>, I: Interpolator<f64>> {
+// TODO remove the i32 and f64 restrictions!
+pub struct InterpolatedNoise2D<Src: Noise<i32, Out=f64>, I: Interpolator<f64>> {
     source: Src,
     interpolator: I,
 }
 
-impl<Src: Noise<i32, f64>, I: Interpolator<f64>>
+impl<Src: Noise<i32, Out=f64>, I: Interpolator<f64>>
         InterpolatedNoise2D<Src, I> {
 
     pub fn new(source: Src, interpolator: I) -> InterpolatedNoise2D<Src, I> {
@@ -79,9 +83,11 @@ impl<Src: Noise<i32, f64>, I: Interpolator<f64>>
     }
 }
 
-impl<Src: Noise<i32, f64>, I: Interpolator<f64>>
-        Noise<(f64, f64), f64>
+impl<Src: Noise<i32, Out=f64>, I: Interpolator<f64>>
+        Noise<(f64, f64)>
         for InterpolatedNoise2D<Src, I> {
+
+    type Out = f64;
 
     fn value(&self, (pos_x, pos_y): (f64, f64)) -> f64 {
 

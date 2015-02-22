@@ -3,15 +3,14 @@ use noise::Noise;
 /// Creates noise by combining multiple source noises.
 ///
 /// This noise uses trait objects to manage the multiple source noises.
-pub struct CombinedNoise<'a, In: Clone, Out, Combine: Fn(Out, Out) -> Out> {
-	sources: Vec<Box<Noise<In, Out> + 'a>>,
+pub struct CombinedNoise<'a, In, Out, Combine> {
+	sources: Vec<Box<Noise<In, Out=Out> + 'a>>,
 	combine: Combine,
 }
 
-impl<'a, In: Clone, Out, Combine: Fn(Out, Out) -> Out>
-		CombinedNoise<'a, In, Out, Combine> {
+impl<'a, In, Out, Combine> CombinedNoise<'a, In, Out, Combine> {
 
-	pub fn new(sources: Vec<Box<Noise<In, Out> + 'a>>, combine: Combine)
+	pub fn new(sources: Vec<Box<Noise<In, Out=Out> + 'a>>, combine: Combine)
 			-> CombinedNoise<'a, In, Out, Combine> {
 		assert!(!sources.is_empty());
 		CombinedNoise{
@@ -22,8 +21,10 @@ impl<'a, In: Clone, Out, Combine: Fn(Out, Out) -> Out>
 }
 
 impl<'a, In: Clone, Out, Combine: Fn(Out, Out) -> Out>
-		Noise<In, Out>
+		Noise<In>
 		for CombinedNoise<'a, In, Out, Combine> {
+
+	type Out = Out;
 
 	fn value(&self, position: In) -> Out {
 		let mut value = self.sources[0].value(position.clone());
@@ -37,17 +38,16 @@ impl<'a, In: Clone, Out, Combine: Fn(Out, Out) -> Out>
 /// Creates a noise that combines two source noises.
 ///
 /// This generator does not use trait objects, but static dispatch.
-pub struct CombinedNoise2<In: Clone, Out, Src1Out, Src2Out, Src1: Noise<In, Src1Out>, Src2: Noise<In, Src2Out>, Combine: Fn(Src1Out, Src2Out) -> Out> {
+pub struct CombinedNoise2<Src1, Src2, Combine> {
 	source1: Src1,
 	source2: Src2,
 	combine: Combine,
 }
 
-impl<In: Clone, Out, Src1Out, Src2Out, Src1: Noise<In, Src1Out>, Src2: Noise<In, Src2Out>, Combine: Fn(Src1Out, Src2Out) -> Out>
-		CombinedNoise2<In, Out, Src1Out, Src2Out, Src1, Src2, Combine> {
+impl<Src1, Src2, Combine> CombinedNoise2<Src1, Src2, Combine> {
 
 	pub fn new(source1: Src1, source2: Src2, combine: Combine)
-			-> CombinedNoise2<In, Out, Src1Out, Src2Out, Src1, Src2, Combine> {
+			-> CombinedNoise2<Src1, Src2, Combine> {
 		CombinedNoise2{
 			source1: source1,
 			source2: source2,
@@ -56,9 +56,11 @@ impl<In: Clone, Out, Src1Out, Src2Out, Src1: Noise<In, Src1Out>, Src2: Noise<In,
 	}
 }
 
-impl<In: Clone, Out, Src1Out, Src2Out, Src1: Noise<In, Src1Out>, Src2: Noise<In, Src2Out>, Combine: Fn(Src1Out, Src2Out) -> Out>
-		Noise<In, Out>
-		for CombinedNoise2<In, Out, Src1Out, Src2Out, Src1, Src2, Combine> {
+impl<In: Clone, Out, Src1Out, Src2Out, Src1: Noise<In, Out=Src1Out>, Src2: Noise<In, Out=Src2Out>, Combine: Fn(Src1Out, Src2Out) -> Out>
+		Noise<In>
+		for CombinedNoise2<Src1, Src2, Combine> {
+
+	type Out = Out;
 
 	fn value(&self, position: In) -> Out {
 		let value1 = self.source1.value(position.clone());

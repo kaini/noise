@@ -2,16 +2,13 @@ use noise::Noise;
 
 /// Applies an operation on the position parameter before the
 /// position is passed to the source noise.
-#[derive(Clone)]
-pub struct InputOp<In, Out, OpOut, Src: Noise<OpOut, Out>, Op: Fn(In) -> OpOut> {
+pub struct InputOp<Src, Op> {
 	source: Src,
 	op: Op,
 }
 
-impl<In, Out, OpOut, Src: Noise<OpOut, Out>, Op: Fn(In) -> OpOut>
-		InputOp<In, Out, OpOut, Src, Op> {
-
-	pub fn new(source: Src, op: Op) -> InputOp<In, Out, OpOut, Src, Op> {
+impl<Src, Op> InputOp<Src, Op> {
+	pub fn new(source: Src, op: Op) -> InputOp<Src, Op> {
 		InputOp{
 			source: source,
 			op: op
@@ -19,9 +16,11 @@ impl<In, Out, OpOut, Src: Noise<OpOut, Out>, Op: Fn(In) -> OpOut>
 	}
 }
 
-impl<In, Out, OpOut, Src: Noise<OpOut, Out>, Op: Fn(In) -> OpOut>
-		Noise<In, Out>
-		for InputOp<In, Out, OpOut, Src, Op> {
+impl<In, Out, OpOut, Src: Noise<OpOut, Out=Out>, Op: Fn(In) -> OpOut>
+		Noise<In>
+		for InputOp<Src, Op> {
+
+	type Out = Out;
 
 	fn value(&self, position: In) -> Out {
 		self.source.value((self.op)(position))

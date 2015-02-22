@@ -1,4 +1,4 @@
-#![feature(path)]
+#![feature(old_path)]
 extern crate image;
 extern crate noise;
 extern crate rand;
@@ -39,10 +39,10 @@ fn main() {
     );
 
     let size = 128;
-    let image = ImageBuffer::from_fn(size, size, Box::new(|x: u32, y: u32| {
+    let image = ImageBuffer::from_fn(size, size, |x: u32, y: u32| {
         let (r, g, b) = noise.value((x as f64, y as f64));
         Rgb([r, g, b])
-    }));
+    });
     match image.save(&Path::new("output.png")) {
         Err(e) => panic!("Could not write file! {}", e),
         Ok(..) => {},

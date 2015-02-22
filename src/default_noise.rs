@@ -8,7 +8,6 @@ static PRIME_SEED: i32 = 748361;
 ///
 /// This is implemented using `libnoise`'s integer noise function. See the [libnoise documentation](
 /// http://libnoise.sourceforge.net/noisegen/#coherentnoise) for details.
-#[derive(Clone)]
 pub struct DefaultI32Noise {
     seed: i32,
 }
@@ -21,7 +20,9 @@ impl DefaultI32Noise {
     }
 }
 
-impl Noise<i32, f64> for DefaultI32Noise {
+impl Noise<i32> for DefaultI32Noise {
+    type Out = f64;
+
     fn value(&self, position: i32) -> f64 {
         let a = position * PRIME_POSITION + self.seed;
         let b = (a << 13) ^ a;
@@ -31,7 +32,6 @@ impl Noise<i32, f64> for DefaultI32Noise {
 }
 
 /// Generator that always returns the same value.
-#[derive(Clone)]
 pub struct ConstantNoise<Out> {
     value: Out,
 }
@@ -44,17 +44,20 @@ impl<Out: Clone> ConstantNoise<Out> {
     }
 }
 
-impl<In, Out: Clone> Noise<In, Out> for ConstantNoise<Out> {
+impl<In, Out: Clone> Noise<In> for ConstantNoise<Out> {
+    type Out = Out;
+
     fn value(&self, _: In) -> Out {
         self.value.clone()
     }
 }
 
 /// Generator that always returns the position parameter unchanged.
-#[derive(Clone)]
 pub struct NoOpNoise;
 
-impl<In> Noise<In, In> for NoOpNoise {
+impl<In> Noise<In> for NoOpNoise {
+    type Out = In;
+
     fn value(&self, position: In) -> In {
         position
     }
@@ -63,18 +66,20 @@ impl<In> Noise<In, In> for NoOpNoise {
 /// Wrapper that can be used to use `Box<Noise<...>>` as source to other
 /// building blocks.
 pub struct UnboxNoise<'a, In, Out> {
-    source: Box<Noise<In, Out> + 'a>
+    source: Box<Noise<In, Out=Out> + 'a>
 }
 
 impl<'a, In, Out> UnboxNoise<'a, In, Out> {
-    pub fn new(source: Box<Noise<In, Out> + 'a>) -> UnboxNoise<'a, In, Out> {
+    pub fn new(source: Box<Noise<In, Out=Out> + 'a>) -> UnboxNoise<'a, In, Out> {
         UnboxNoise{
             source: source
         }
     }
 }
 
-impl<'a, In, Out> Noise<In, Out> for UnboxNoise<'a, In, Out> {
+impl<'a, In, Out> Noise<In> for UnboxNoise<'a, In, Out> {
+    type Out = Out;
+
     fn value(&self, position: In) -> Out {
         self.source.value(position)
     }

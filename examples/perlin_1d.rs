@@ -1,4 +1,4 @@
-#![feature(path, core)]
+#![feature(old_path, core)]
 extern crate image;
 extern crate noise;
 extern crate rand;
