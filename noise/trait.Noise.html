@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="rustdoc">
+    <meta name="description" content="API documentation for the Rust `Noise` trait in crate `noise`.">
+    <meta name="keywords" content="rust, rustlang, rust-lang, Noise">
+
+    <title>noise::Noise - Rust</title>
+
+    <link rel="stylesheet" type="text/css" href="../main.css">
+
+    
+    
+</head>
+<body class="rustdoc">
+    <!--[if lte IE 8]>
+    <div class="warning">
+        This old browser is unsupported and will most likely display funky
+        things.
+    </div>
+    <![endif]-->
+
+    
+
+    <section class="sidebar">
+        
+        <p class='location'><a href='index.html'>noise</a></p><div class='block mod'><h2>Modules</h2><a class='mod ' href='blocks/index.html' title='**Start here!** Finished noise functions built using the primitive noise blocks.'>blocks</a><a class='mod ' href='interpolate/index.html' title='Interpolating between two numbers.'>interpolate</a></div><div class='block struct'><h2>Structs</h2><a class='struct ' href='struct.CombinedNoise.html' title='Creates noise by combining multiple source noises.'>CombinedNoise</a><a class='struct ' href='struct.CombinedNoise2.html' title='Creates a noise that combines two source noises.'>CombinedNoise2</a><a class='struct ' href='struct.ConstantNoise.html' title='Generator that always returns the same value.'>ConstantNoise</a><a class='struct ' href='struct.DefaultI32Noise.html' title='Generator for pseudo-random integer noise.'>DefaultI32Noise</a><a class='struct ' href='struct.InputOp.html' title='Applies an operation on the position parameter before the position is passed to the source noise.'>InputOp</a><a class='struct ' href='struct.InterpolatedNoise.html' title='Takes discrete input noise to produce value-interpolated output noise.'>InterpolatedNoise</a><a class='struct ' href='struct.InterpolatedNoise2D.html' title='Produces two-dimensional gradient-noise using discrete one-dimensional source noise.'>InterpolatedNoise2D</a><a class='struct ' href='struct.NoOpNoise.html' title='Generator that always returns the position parameter unchanged.'>NoOpNoise</a><a class='struct ' href='struct.OutputOp.html' title='Applies an operation to the output of the source noise.'>OutputOp</a><a class='struct ' href='struct.UnboxNoise.html' title='Wrapper that can be used to use `Box&lt;Noise&lt;...&gt;&gt;` as source to other building blocks.'>UnboxNoise</a></div><div class='block trait'><h2>Traits</h2><a class='trait current' href='trait.Noise.html' title='A common interface for all structs that can generate noise.'>Noise</a></div>
+    </section>
+
+    <nav class="sub">
+        <form class="search-form js-only">
+            <div class="search-container">
+                <input class="search-input" name="search"
+                       autocomplete="off"
+                       placeholder="Click or press 'S' to search, '?' for more options..."
+                       type="search">
+            </div>
+        </form>
+    </nav>
+
+    <section id='main' class="content trait">
+<h1 class='fqn'><span class='in-band'>Trait <a href='index.html'>noise</a>::<wbr><a class='trait' href=''>Noise</a><wbr></span><span class='out-of-band'><span id='render-detail'>
+            <a id="collapse-all" href="#">[-]</a>&nbsp;<a id="expand-all" href="#">[+]</a>
+        </span><a id='src-757' href='../src/noise/noise.rs.html#3-10'>[src]</a></span></h1>
+<pre class='rust trait'>pub trait Noise&lt;In&gt; {
+    type Out;
+
+    fn <a href='#tymethod.value' class='fnname'>value</a>(&amp;self, position: In) -&gt; Self::Out;
+}</pre><div class='docblock'><p>A common interface for all structs that can generate noise.</p>
+</div>
+            <h2 id='associated-types'>Associated Types</h2>
+            <div class='methods'>
+        <h3 id='associatedtype.Out' class='method'><a class='stability Unmarked' title='No stability level'></a><code>type Out</code></h3></div>
+            <h2 id='required-methods'>Required Methods</h2>
+            <div class='methods'>
+        <h3 id='tymethod.value' class='method'><a class='stability Unmarked' title='No stability level'></a><code>fn <a href='#tymethod.value' class='fnname'>value</a>(&amp;self, position: In) -&gt; Self::Out</code></h3><div class='docblock'><p>Calculates the value of the noise function at the given position.</p>
+
+<p>The noise for a position never changes.</p>
+</div></div>
+        <h2 id='implementors'>Implementors</h2>
+        <ul class='item-list' id='implementors-list'>
+    <li><a class='stability Unmarked' title='No stability level'></a><code>impl <a class='trait' href='../noise/trait.Noise.html' title='noise::Noise'>Noise</a>&lt;<a href='http://doc.rust-lang.org/nightly/std/primitive.i32.html'>i32</a>&gt; for <a class='struct' href='../noise/struct.DefaultI32Noise.html' title='noise::DefaultI32Noise'>DefaultI32Noise</a></code></li>
+<li><a class='stability Unmarked' title='No stability level'></a><code>impl&lt;In, Out: <a class='trait' href='http://doc.rust-lang.org/nightly/core/clone/trait.Clone.html' title='core::clone::Clone'>Clone</a>&gt; <a class='trait' href='../noise/trait.Noise.html' title='noise::Noise'>Noise</a>&lt;In&gt; for <a class='struct' href='../noise/struct.ConstantNoise.html' title='noise::ConstantNoise'>ConstantNoise</a>&lt;Out&gt;</code></li>
+<li><a class='stability Unmarked' title='No stability level'></a><code>impl&lt;In&gt; <a class='trait' href='../noise/trait.Noise.html' title='noise::Noise'>Noise</a>&lt;In&gt; for <a class='struct' href='../noise/struct.NoOpNoise.html' title='noise::NoOpNoise'>NoOpNoise</a></code></li>
+<li><a class='stability Unmarked' title='No stability level'></a><code>impl&lt;'a, In, Out&gt; <a class='trait' href='../noise/trait.Noise.html' title='noise::Noise'>Noise</a>&lt;In&gt; for <a class='struct' href='../noise/struct.UnboxNoise.html' title='noise::UnboxNoise'>UnboxNoise</a>&lt;'a, In, Out&gt;</code></li>
+<li><a class='stability Unmarked' title='No stability level'></a><code>impl&lt;InOut: <a class='trait' href='http://doc.rust-lang.org/nightly/std/num/trait.Float.html' title='std::num::Float'>Float</a>, Src: <a class='trait' href='../noise/trait.Noise.html' title='noise::Noise'>Noise</a>&lt;<a href='http://doc.rust-lang.org/nightly/std/primitive.i32.html'>i32</a>, Out=InOut&gt;, I: <a class='trait' href='../noise/interpolate/trait.Interpolator.html' title='noise::interpolate::Interpolator'>Interpolator</a>&lt;InOut&gt;&gt; <a class='trait' href='../noise/trait.Noise.html' title='noise::Noise'>Noise</a>&lt;InOut&gt; for <a class='struct' href='../noise/struct.InterpolatedNoise.html' title='noise::InterpolatedNoise'>InterpolatedNoise</a>&lt;Src, I&gt;</code></li>
+<li><a class='stability Unmarked' title='No stability level'></a><code>impl&lt;Src: <a class='trait' href='../noise/trait.Noise.html' title='noise::Noise'>Noise</a>&lt;<a href='http://doc.rust-lang.org/nightly/std/primitive.i32.html'>i32</a>, Out=<a href='http://doc.rust-lang.org/nightly/std/primitive.f64.html'>f64</a>&gt;, I: <a class='trait' href='../noise/interpolate/trait.Interpolator.html' title='noise::interpolate::Interpolator'>Interpolator</a>&lt;<a href='http://doc.rust-lang.org/nightly/std/primitive.f64.html'>f64</a>&gt;&gt; <a class='trait' href='../noise/trait.Noise.html' title='noise::Noise'>Noise</a>&lt;<a href='http://doc.rust-lang.org/nightly/std/primitive.tuple.html'>(<a href='http://doc.rust-lang.org/nightly/std/primitive.f64.html'>f64</a>, <a href='http://doc.rust-lang.org/nightly/std/primitive.f64.html'>f64</a>)</a>&gt; for <a class='struct' href='../noise/struct.InterpolatedNoise2D.html' title='noise::InterpolatedNoise2D'>InterpolatedNoise2D</a>&lt;Src, I&gt;</code></li>
+<li><a class='stability Unmarked' title='No stability level'></a><code>impl&lt;In, Mid, Out, Src: <a class='trait' href='../noise/trait.Noise.html' title='noise::Noise'>Noise</a>&lt;In, Out=Mid&gt;, Op: <a class='trait' href='http://doc.rust-lang.org/nightly/core/ops/trait.Fn.html' title='core::ops::Fn'>Fn</a>(Mid) -&gt; Out&gt; <a class='trait' href='../noise/trait.Noise.html' title='noise::Noise'>Noise</a>&lt;In&gt; for <a class='struct' href='../noise/struct.OutputOp.html' title='noise::OutputOp'>OutputOp</a>&lt;Src, Op&gt;</code></li>
+<li><a class='stability Unmarked' title='No stability level'></a><code>impl&lt;In, Out, OpOut, Src: <a class='trait' href='../noise/trait.Noise.html' title='noise::Noise'>Noise</a>&lt;OpOut, Out=Out&gt;, Op: <a class='trait' href='http://doc.rust-lang.org/nightly/core/ops/trait.Fn.html' title='core::ops::Fn'>Fn</a>(In) -&gt; OpOut&gt; <a class='trait' href='../noise/trait.Noise.html' title='noise::Noise'>Noise</a>&lt;In&gt; for <a class='struct' href='../noise/struct.InputOp.html' title='noise::InputOp'>InputOp</a>&lt;Src, Op&gt;</code></li>
+<li><a class='stability Unmarked' title='No stability level'></a><code>impl&lt;'a, In: <a class='trait' href='http://doc.rust-lang.org/nightly/core/clone/trait.Clone.html' title='core::clone::Clone'>Clone</a>, Out, Combine: <a class='trait' href='http://doc.rust-lang.org/nightly/core/ops/trait.Fn.html' title='core::ops::Fn'>Fn</a>(Out, Out) -&gt; Out&gt; <a class='trait' href='../noise/trait.Noise.html' title='noise::Noise'>Noise</a>&lt;In&gt; for <a class='struct' href='../noise/struct.CombinedNoise.html' title='noise::CombinedNoise'>CombinedNoise</a>&lt;'a, In, Out, Combine&gt;</code></li>
+<li><a class='stability Unmarked' title='No stability level'></a><code>impl&lt;In: <a class='trait' href='http://doc.rust-lang.org/nightly/core/clone/trait.Clone.html' title='core::clone::Clone'>Clone</a>, Out, Src1Out, Src2Out, Src1: <a class='trait' href='../noise/trait.Noise.html' title='noise::Noise'>Noise</a>&lt;In, Out=Src1Out&gt;, Src2: <a class='trait' href='../noise/trait.Noise.html' title='noise::Noise'>Noise</a>&lt;In, Out=Src2Out&gt;, Combine: <a class='trait' href='http://doc.rust-lang.org/nightly/core/ops/trait.Fn.html' title='core::ops::Fn'>Fn</a>(Src1Out, Src2Out) -&gt; Out&gt; <a class='trait' href='../noise/trait.Noise.html' title='noise::Noise'>Noise</a>&lt;In&gt; for <a class='struct' href='../noise/struct.CombinedNoise2.html' title='noise::CombinedNoise2'>CombinedNoise2</a>&lt;Src1, Src2, Combine&gt;</code></li>
+</ul><script type="text/javascript" async
+                              src="../implementors/noise/trait.Noise.js">
+                      </script></section>
+    <section id='search' class="content hidden"></section>
+
+    <section class="footer"></section>
+
+    <div id="help" class="hidden">
+        <div class="shortcuts">
+            <h1>Keyboard shortcuts</h1>
+            <dl>
+                <dt>?</dt>
+                <dd>Show this help dialog</dd>
+                <dt>S</dt>
+                <dd>Focus the search field</dd>
+                <dt>&larrb;</dt>
+                <dd>Move up in search results</dd>
+                <dt>&rarrb;</dt>
+                <dd>Move down in search results</dd>
+                <dt>&#9166;</dt>
+                <dd>Go to active search result</dd>
+            </dl>
+        </div>
+        <div class="infos">
+            <h1>Search tricks</h1>
+            <p>
+                Prefix searches with a type followed by a colon (e.g.
+                <code>fn:</code>) to restrict the search to a given type.
+            </p>
+            <p>
+                Accepted types are: <code>fn</code>, <code>mod</code>,
+                <code>struct</code>, <code>enum</code>,
+                <code>trait</code>, <code>typedef</code> (or
+                <code>tdef</code>).
+            </p>
+        </div>
+    </div>
+
+    
+
+    <script>
+        window.rootPath = "../";
+        window.currentCrate = "noise";
+        window.playgroundUrl = "";
+    </script>
+    <script src="../jquery.js"></script>
+    <script src="../main.js"></script>
+    
+    <script async src="../search-index.js"></script>
+</body>
+</html>
